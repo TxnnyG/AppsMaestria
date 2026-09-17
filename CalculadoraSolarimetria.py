@@ -83,7 +83,7 @@ with col2:
         angulos_diarios.append(np.degrees(np.arccos(np.clip(ct, -1.0, 1.0))))
 
     fig, ax = plt.subplots(figsize=(6, 3.5))
-    ax.plot(horas_reloj, angulos_diarios, color='#ff4b4b', linewidth=2.5, label='Curva de $\theta$')
+    ax.plot(horas_reloj, angulos_diarios, color='#ff4b4b', linewidth=2.5, label='Curva de $\Theta$')
     ax.axhline(90, color='gray', linestyle='--', alpha=0.7, label='Límite de sombra ($90^\circ$)')
     ax.scatter([12.0 + (omega_deg/15.0)], [theta_deg], color='black', s=60, zorder=5, label='Valor actual')
     ax.set_xlabel("Hora Solar Aproximada", fontsize=9)
