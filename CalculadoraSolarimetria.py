@@ -15,7 +15,7 @@ with st.expander("💡 ¿Qué significan estos conceptos? (Guía rápida para pr
         * **Si $\ theta = 0^\circ$:** Los rayos caen de forma perfectamente perpendicular, logrando el mayor aprovechamiento energético.
         * **Si $\ theta$ se acerca a $90^\circ$:** Los rayos rozan la superficie y la energía captada es casi nula.
     * **Latitud ($\Phi$):** La posición geográfica del lugar respecto al ecuador de la Tierra.
-    * **Declinación Solar ($\Varphi $):** El ángulo de inclinación estacional de la Tierra frente al Sol (varía entre $-23.45^\circ$ y $+23.45^\circ$ a lo largo del año).
+    * **Declinación Solar ($\Delta$):** El ángulo de inclinación estacional de la Tierra frente al Sol (varía entre $-23.45^\circ$ y $+23.45^\circ$ a lo largo del año).
     * **Inclinación del Panel ($\Beta$):** Qué tan levantado o acostado está el colector respecto al suelo horizontal.
     * **Azimut de la Superficie ($r$):** La orientación horizontal del panel ($0^\circ$ apunta exactamente al Sur geográfico).
     """)
@@ -87,7 +87,7 @@ with col2:
     ax.axhline(90, color='gray', linestyle='--', alpha=0.7, label='Límite de sombra ($90^\circ$)')
     ax.scatter([12.0 + (omega_deg/15.0)], [theta_deg], color='black', s=60, zorder=5, label='Valor actual')
     ax.set_xlabel("Hora Solar Aproximada", fontsize=9)
-    ax.set_ylabel("Ángulo $\theta$ (°)", fontsize=9)
+    ax.set_ylabel("Ángulo $\Theta$ (°)", fontsize=9)
     ax.grid(True, linestyle=':', alpha=0.6)
     ax.legend(fontsize=8)
     st.pyplot(fig)
