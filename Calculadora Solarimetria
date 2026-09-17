@@ -41,7 +41,7 @@ cos_theta = (
     np.sin(phi) * np.cos(Phi) * np.sin(beta) * np.cos(r) +
     np.cos(phi) * np.cos(Phi) * np.cos(beta) * np.cos(omega) +
     np.cos(phi) * np.sin(Phi) * np.sin(beta) * np.cos(r) * np.cos(omega) +
-    np.cos(phi) * np.sin(Phi) * np.sin(r) * np.sin(omega)
+    np.cos(phi) * np.sin(beta) * np.sin(r) * np.sin(omega)
 )
 
 cos_theta = np.clip(cos_theta, -1.0, 1.0)
