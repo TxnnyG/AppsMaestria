@@ -11,12 +11,12 @@ st.markdown("### Herramienta interactiva para comprender cómo los rayos del Sol
 # Sección educativa desplegable para personas sin experiencia previa
 with st.expander("💡 ¿Qué significan estos conceptos? (Guía rápida para principiantes)", expanded=True):
     st.markdown("""
-    * **Ángulo de Incidencia (\theta):** Es el ángulo que forman los rayos del Sol con una línea imaginaria perpendicular (normal) a la superficie del panel. 
+    * **Ángulo de Incidencia (\$theta$):** Es el ángulo que forman los rayos del Sol con una línea imaginaria perpendicular (normal) a la superficie del panel. 
         * **Si $\ theta = 0^\circ$:** Los rayos caen de forma perfectamente perpendicular, logrando el mayor aprovechamiento energético.
         * **Si $\ theta$ se acerca a $90^\circ$:** Los rayos rozan la superficie y la energía captada es casi nula.
     * **Latitud ($\Phi$):** La posición geográfica del lugar respecto al ecuador de la Tierra.
-    * **Declinación Solar ($ \varphi $):** El ángulo de inclinación estacional de la Tierra frente al Sol (varía entre $-23.45^\circ$ y $+23.45^\circ$ a lo largo del año).
-    * **Inclinación del Panel ($ \beta $):** Qué tan levantado o acostado está el colector respecto al suelo horizontal.
+    * **Declinación Solar ($\ varphi $):** El ángulo de inclinación estacional de la Tierra frente al Sol (varía entre $-23.45^\circ$ y $+23.45^\circ$ a lo largo del año).
+    * **Inclinación del Panel ($\ beta$):** Qué tan levantado o acostado está el colector respecto al suelo horizontal.
     * **Azimut de la Superficie ($r$):** La orientación horizontal del panel ($0^\circ$ apunta exactamente al Sur geográfico).
     """)
 
