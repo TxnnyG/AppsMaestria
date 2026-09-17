@@ -11,9 +11,9 @@ st.markdown("### Herramienta interactiva para comprender cómo los rayos del Sol
 # Sección educativa desplegable para personas sin experiencia previa
 with st.expander("💡 ¿Qué significan estos conceptos? (Guía rápida para principiantes)", expanded=True):
     st.markdown("""
-    * **Ángulo de Incidencia ($\theta$):** Es el ángulo que forman los rayos del Sol con una línea imaginaria perpendicular (normal) a la superficie del panel. 
-        * **Si $\theta = 0^\circ$:** Los rayos caen de forma perfectamente perpendicular, logrando el mayor aprovechamiento energético.
-        * **Si $\theta$ se acerca a $90^\circ$:** Los rayos rozan la superficie y la energía captada es casi nula.
+    * **Ángulo de Incidencia ($\ theta$):** Es el ángulo que forman los rayos del Sol con una línea imaginaria perpendicular (normal) a la superficie del panel. 
+        * **Si $\ theta = 0^\circ$:** Los rayos caen de forma perfectamente perpendicular, logrando el mayor aprovechamiento energético.
+        * **Si $\ theta$ se acerca a $90^\circ$:** Los rayos rozan la superficie y la energía captada es casi nula.
     * **Latitud ($\Phi$):** La posición geográfica del lugar respecto al ecuador de la Tierra.
     * **Declinación Solar ($\varphi$):** El ángulo de inclinación estacional de la Tierra frente al Sol (varía entre $-23.45^\circ$ y $+23.45^\circ$ a lo largo del año).
     * **Inclinación del Panel ($\beta$):** Qué tan levantado o acostado está el colector respecto al suelo horizontal.
@@ -51,7 +51,7 @@ theta_deg = np.degrees(np.arccos(cos_theta))
 col1, col2 = st.columns([1, 2])
 
 with col1:
-    st.metric(label="Ángulo de Incidencia ($\theta$)", value=f"{theta_deg:.2f}°")
+    st.metric(label="Ángulo de Incidencia ($\ theta$)", value=f"{theta_deg:.2f}°")
     
     # Interpretación intuitiva en formato de alerta visual
     if theta_deg > 90:
