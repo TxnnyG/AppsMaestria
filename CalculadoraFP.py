@@ -29,7 +29,9 @@ from reportlab.lib.enums import TA_CENTER, TA_LEFT
 RUTA_LOGO_UACM = "logo_uacm.png"
 RUTA_LOGO_PEUACM = "logo_peuacm.png"
 
+# =======================================================================
 # 1. CATÁLOGOS COMERCIALES DE BANCOS DE CAPACITORES (2026)
+# =======================================================================
 
 @dataclass(frozen=True)
 class BancoCapacitor:
@@ -71,8 +73,9 @@ def banco_maximo_disponible(nivel_tension: str) -> float:
     valores = [b.kvar for b in BASE_CAPACITORES if b.nivel_tension == nivel_tension]
     return max(valores) if valores else 0.0
 
-
+# =======================================================================
 # 2. MOTOR DE CÁLCULO DE INGENIERÍA Y TARIFARIO
+# =======================================================================
 
 RECARGO_MAXIMO_PCT = 120.0
 BONIFICACION_MAXIMA_PCT = 2.5
@@ -239,7 +242,9 @@ def calcular_todo(datos: DatosEntrada) -> ResultadoIntegral:
         costos_motor_sincrono=costos_ms,
     )
 
+# =======================================================================
 # 3. GENERADOR DE REPORTE PDF (ACUERDO CT/11.SE/8-2025)
+# =======================================================================
 
 COLOR_UACM_PDF = colors.HexColor("#8F141B")
 COLOR_VERDE_PDF = colors.HexColor("#065F46")
@@ -403,7 +408,7 @@ st.set_page_config(
 
 # Estilos CSS de alto contraste
 st.markdown(
-    "
+    """
     <style>
         .stApp {
             background-color: #F8FAFC !important;
@@ -426,4 +431,3 @@ st.markdown(
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
         }
         .header-title-uacm {
-        
