@@ -81,28 +81,15 @@ RECARGO_MAXIMO_PCT = 120.0
 BONIFICACION_MAXIMA_PCT = 2.5
 
 def determinar_fp_minimo_base(nivel_tension: str, demanda_contratada_kw: float, demanda_medida_kw: float) -> float:
-    """
-    Determina la base de factor de potencia mínimo regulatorio considerando
-    la demanda contratada o la demanda máxima registrada:
-    - Baja Tensión: 0.90
-    - Media Tensión (< 1000 kW / 1 MW): 0.90
-    - Media Tensión (>= 1000 kW / 1 MW): 0.97
-    - Alta Tensión: 0.97
-    """
     demanda_referencia = max(demanda_contratada_kw, demanda_medida_kw)
     if nivel_tension == "Baja Tensión (< 1 kV)":
         return 0.90
     elif nivel_tension == "Media Tensión (1 kV - 35 kV)":
         return 0.97 if demanda_referencia >= 1000.0 else 0.90
-    else:  # Alta Tensión (> 35 kV)
+    else:
         return 0.97
 
 def calcular_demanda_facturable(demanda_medida_kw: float, demanda_contratada_kw: float) -> tuple[float, str]:
-    """
-    Fórmula tarifaria oficial CFE para exceso de demanda:
-    Si DP <= DC -> DF = DP
-    Si DP > DC -> DF = DC + 2 * (DP - DC)
-    """
     if demanda_medida_kw <= demanda_contratada_kw:
         return demanda_medida_kw, "Normal (Demanda dentro del límite contratado)"
     else:
@@ -146,7 +133,7 @@ def calcular_bonificacion_recargo(fp_actual: float, fp_base: float) -> Resultado
             aplica="Recargo",
             porcentaje_recargo=round(pct, 2),
             porcentaje_bonificacion=None,
-            detalle_recargo=f"Aplica recargo del {pct:.2f}% en la facturación de energía activa (Fórmula: 3/5·[({fp_base:.2f}/FP) − 1]·100).",
+            detalle_recargo=f"Aplica recargo del {pct:.2f}% en la facturación de energía activa.",
             detalle_bonificacion=f"No aplica (FP menor al mínimo requerido de {fp_base:.2f}).",
             formula_aplicada=f"3/5 · [({fp_base:.2f} / FP) − 1] · 100"
         )
@@ -158,7 +145,7 @@ def calcular_bonificacion_recargo(fp_actual: float, fp_base: float) -> Resultado
             porcentaje_recargo=None,
             porcentaje_bonificacion=round(pct, 2),
             detalle_recargo=f"Sin recargo (Cumple y supera el FP mínimo de {fp_base:.2f}).",
-            detalle_bonificacion=f"Aplica bonificación del {pct:.2f}% en la facturación de energía activa (Fórmula: 1/4·[1 − ({fp_base:.2f}/FP)]·100).",
+            detalle_bonificacion=f"Aplica bonificación del {pct:.2f}% en la facturación de energía activa.",
             formula_aplicada=f"1/4 · [1 − ({fp_base:.2f} / FP)] · 100"
         )
     else:
@@ -431,3 +418,20 @@ st.markdown(
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
         }
         .header-title-uacm {
+            color: #8F141B !important;
+            font-size: 24px !important;
+            font-weight: 900 !important;
+            margin: 0 !important;
+            text-align: center;
+        }
+        .header-sub-peuacm {
+            color: #065F46 !important;
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            margin: 3px 0 !important;
+            text-align: center;
+        }
+        .header-desc {
+            color: #334155 !important;
+            font-size: 13.5px !important;
+            font-we
