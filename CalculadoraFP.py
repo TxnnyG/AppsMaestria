@@ -403,7 +403,7 @@ st.set_page_config(
 
 # Estilos CSS de alto contraste
 st.markdown(
-    """
+    "
     <style>
         .stApp {
             background-color: #F8FAFC !important;
