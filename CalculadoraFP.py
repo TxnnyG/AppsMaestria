@@ -393,45 +393,237 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS de alto contraste
 st.markdown(
     """
     <style>
-        .stApp {
-            background-color: #F8FAFC !important;
-            color: #0F172A !important;
-        }
-        .main .block-container {
-            padding-top: 1.2rem !important;
-            padding-bottom: 3rem !important;
-            max-width: 1120px !important;
-        }
+        .stApp { background-color: #F8FAFC !important; color: #0F172A !important; }
+        .main .block-container { padding-top: 1.2rem !important; padding-bottom: 3rem !important; max-width: 1120px !important; }
+        .header-solid-box { background-color: #FFFFFF !important; border: 2px solid #E2E8F0 !important; border-top: 6px solid #8F141B !important; border-radius: 12px !important; padding: 16px 24px !important; margin-bottom: 20px !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important; }
+        .header-title-uacm { color: #8F141B !important; font-size: 24px !important; font-weight: 900 !important; margin: 0 !important; text-align: center; }
+        .header-sub-peuacm { color: #065F46 !important; font-size: 15px !important; font-weight: 700 !important; margin: 3px 0 !important; text-align: center; }
+        .header-desc { color: #334155 !important; font-size: 13.5px !important; font-weight: 600 !important; margin: 0 !important; text-align: center; }
+        div[data-baseweb="input"], div[data-baseweb="input"] > div { background-color: #FFFFFF !important; border: 2px solid #CBD5E1 !important; border-radius: 8px !important; }
+        input { color: #0F172A !important; font-weight: 800 !important; font-size: 16px !important; }
+        label, p[data-testid="stWidgetLabel"] { color: #0F172A !important; font-weight: 800 !important; font-size: 14px !important; }
+        .metric-card-box { background: #FFFFFF !important; border-radius: 10px !important; padding: 16px 20px !important; border: 1.5px solid #CBD5E1 !important; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05) !important; }
+        .metric-card-uacm { border-left: 6px solid #8F141B !important; }
+        .metric-card-green { border-left: 6px solid #065F46 !important; }
+        .metric-card-inactive { border-left: 6px solid #94A3B8 !important; background: #F8FAFC !important; }
+        .metric-label { font-size: 12.5px !important; font-weight: 800 !important; color: #475569 !important; text-transform: uppercase !important; margin-bottom: 4px !important; }
+        .metric-num-uacm { font-size: 28px !important; font-weight: 900 !important; color: #8F141B !important; margin: 0 !important; line-height: 1.1 !important; }
+        .metric-num-green { font-size: 28px !important; font-weight: 900 !important; color: #065F46 !important; margin: 0 !important; line-height: 1.1 !important; }
+        .metric-foot { font-size: 12px !important; color: #475569 !important; margin-top: 4px !important; font-weight: 600 !important; }
+        .info-dark-box { background-color: #FFFFFF !important; border: 1.5px solid #CBD5E1 !important; border-radius: 8px !important; padding: 14px 18px !important; margin-top: 12px !important; color: #0F172A !important; font-size: 14px !important; font-weight: 600 !important; }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-        /* Banner Institucional */
-        .header-solid-box {
-            background-color: #FFFFFF !important;
-            border: 2px solid #E2E8F0 !important;
-            border-top: 6px solid #8F141B !important;
-            border-radius: 12px !important;
-            padding: 16px 24px !important;
-            margin-bottom: 20px !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-        }
-        .header-title-uacm {
-            color: #8F141B !important;
-            font-size: 24px !important;
-            font-weight: 900 !important;
-            margin: 0 !important;
-            text-align: center;
-        }
-        .header-sub-peuacm {
-            color: #065F46 !important;
-            font-size: 15px !important;
-            font-weight: 700 !important;
-            margin: 3px 0 !important;
-            text-align: center;
-        }
-        .header-desc {
-            color: #334155 !important;
-            font-size: 13.5px !important;
-            font-we
+st.markdown('<div class="header-solid-box">', unsafe_allow_html=True)
+col_h1, col_h2, col_h3 = st.columns([1.2, 5, 1.5])
+with col_h1:
+    if os.path.exists(RUTA_LOGO_UACM):
+        st.image(RUTA_LOGO_UACM, width=120)
+with col_h2:
+    st.markdown(
+        """
+        <div class="header-title-uacm">UNIVERSIDAD AUTÓNOMA DE LA CIUDAD DE MÉXICO</div>
+        <div class="header-sub-peuacm">Maestría en Ingeniería Energética | Fundamentos de Ingeniería Eléctrica</div>
+        <div class="header-desc">Herramienta de Ajuste y Compensación de Factor de Potencia · Programa de Energía (PEUACM)</div>
+        """,
+        unsafe_allow_html=True
+    )
+with col_h3:
+    if os.path.exists(RUTA_LOGO_PEUACM):
+        st.image(RUTA_LOGO_PEUACM, width=145)
+st.markdown('</div>', unsafe_allow_html=True)
+
+with st.expander("📌 Marco Regulatorio y Tarifario: ACUERDO CT/11.SE/8-2025 (CRE / CFE SSB 2026)", expanded=False):
+    st.markdown(
+        """
+        Esta herramienta aplica los criterios vigentes conforme al **ACUERDO CT/11.SE/8-2025**.
+        * **Baja Tensión:** Factor de potencia base de **0.90**.
+        * **Media Tensión con demanda < 1,000 kW (1 MW):** Factor de potencia base de **0.90**.
+        * **Media Tensión con demanda ≥ 1,000 kW (1 MW):** Factor de potencia base obligatorio de **0.97**.
+        * **Alta Tensión:** Factor de potencia base obligatorio de **0.97**.
+        """
+    )
+
+if "pdf_bytes" not in st.session_state:
+    st.session_state.pdf_bytes = None
+
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "1️⃣ Datos Generales",
+    "2️⃣ Recargo / Bonificación",
+    "3️⃣ Banco de Capacitores",
+    "4️⃣ Motor Síncrono",
+    "5️⃣ Inversión y Reporte"
+])
+
+with tab1:
+    st.markdown("<h4 style='color:#8F141B; font-weight:800; margin-bottom:12px;'>Parámetros de la Instalación y Consumo Eléctrico</h4>", unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        nivel_tension = st.selectbox("Nivel de Tensión de la Instalación", NIVELES_TENSION, index=1)
+        demanda_contratada = st.number_input("Demanda Contratada (DC) [kW]", min_value=1.0, value=2000.0, step=10.0)
+        demanda_medida = st.number_input("Demanda Máxima Medida (DP) [kW]", min_value=1.0, value=1800.0, step=10.0)
+        fp_actual = st.number_input("Factor de Potencia Actual Medido (0.100 - 1.000)", min_value=0.10, max_value=1.0, value=0.85, step=0.01, format="%.3f")
+    with col2:
+        fp_minimo_base = determinar_fp_minimo_base(nivel_tension, demanda_contratada, demanda_medida)
+        st.markdown(f"<div style='margin-bottom:8px; font-weight:700; color:#065F46; font-size:13.5px;'>Base de Factor de Potencia Mínimo para este nivel: <b>{fp_minimo_base:.2f} FP</b></div>", unsafe_allow_html=True)
+        fp_objetivo = st.number_input("Factor de Potencia Objetivo Requerido", min_value=0.10, max_value=1.0, value=fp_minimo_base, step=0.01, format="%.3f")
+        penalizacion = st.number_input("Penalización/Recargo Mensual en Recibo [$ MXN]", min_value=0.0, value=18000.0, step=500.0)
+        demanda_facturable, estatus_demanda = calcular_demanda_facturable(demanda_medida, demanda_contratada)
+        factor_utilizacion = (demanda_medida / demanda_contratada) * 100.0
+
+    q_compensar = potencia_reactiva_a_compensar(demanda_medida, fp_actual, fp_objetivo)
+
+    st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+    mcol1, mcol2, mcol3 = st.columns(3)
+    with mcol1:
+        st.markdown(
+            f"""
+            <div class="metric-card-box metric-card-uacm">
+                <div class="metric-label">Potencia Reactiva a Compensar (Qc)</div>
+                <div class="metric-num-uacm">{q_compensar:,.2f} <span style="font-size:16px;">kVAr</span></div>
+                <div class="metric-foot">Para elevar de {fp_actual:.3f} a {fp_objetivo:.3f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with mcol2:
+        st.markdown(
+            f"""
+            <div class="metric-card-box metric-card-green">
+                <div class="metric-label">Demanda Facturable CFE (DF)</div>
+                <div class="metric-num-green">{demanda_facturable:,.1f} <span style="font-size:16px;">kW</span></div>
+                <div class="metric-foot">{estatus_demanda}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with mcol3:
+        color_ut = "#065F46" if factor_utilizacion <= 100.0 else "#8F141B"
+        st.markdown(
+            f"""
+            <div class="metric-card-box" style="border-left: 6px solid {color_ut};">
+                <div class="metric-label">Utilización de Contrato</div>
+                <div style="font-size:28px; font-weight:900; color:{color_ut}; line-height:1.1;">{factor_utilizacion:.1f} %</div>
+                <div class="metric-foot">DP: {demanda_medida:,.0f} kW / DC: {demanda_contratada:,.0f} kW</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+with tab2:
+    st.markdown(f"<h4 style='color:#8F141B; font-weight:800; margin-bottom:12px;'>Diagnóstico Tarifario CFE (Base Mínima: {fp_minimo_base:.2f})</h4>", unsafe_allow_html=True)
+    br = calcular_bonificacion_recargo(fp_actual, fp_minimo_base)
+    col_recargo, col_bonif = st.columns(2)
+    with col_recargo:
+        if br.aplica == "Recargo":
+            st.markdown(
+                f"""
+                <div class="metric-card-box metric-card-uacm">
+                    <div class="metric-label" style="color:#8F141B;">⚠️ RECARGO APLICABLE</div>
+                    <div class="metric-num-uacm">{br.porcentaje_recargo:.2f} <span style="font-size:18px;">%</span></div>
+                    <div class="metric-foot" style="color:#0F172A; font-weight:700;">{br.detalle_recargo}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        else:
+            st.markdown(
+                f"""
+                <div class="metric-card-box metric-card-inactive">
+                    <div class="metric-label">RECARGO EN FACTURACIÓN</div>
+                    <div style="font-size:22px; font-weight:800; color:#94A3B8; margin: 4px 0;">NO APLICA</div>
+                    <div class="metric-foot" style="color:#64748B;">La instalación cumple o supera la base mínima de {fp_minimo_base:.2f}.</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+    with col_bonif:
+        if br.aplica == "Bonificación":
+            st.markdown(
+                f"""
+                <div class="metric-card-box metric-card-green">
+                    <div class="metric-label" style="color:#065F46;">✅ BONIFICACIÓN OBTENIDA</div>
+                    <div class="metric-num-green">{br.porcentaje_bonificacion:.2f} <span style="font-size:18px;">%</span></div>
+                    <div class="metric-foot" style="color:#0F172A; font-weight:700;">{br.detalle_bonificacion}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        else:
+            st.markdown(
+                f"""
+                <div class="metric-card-box metric-card-inactive">
+                    <div class="metric-label">BONIFICACIÓN EN FACTURACIÓN</div>
+                    <div style="font-size:22px; font-weight:800; color:#94A3B8; margin: 4px 0;">NO APLICA</div>
+                    <div class="metric-foot" style="color:#64748B;">Se requiere elevar el FP por encima de {fp_minimo_base:.2f}.</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+with tab3:
+    st.markdown("<h4 style='color:#8F141B; font-weight:800; margin-bottom:12px;'>Alternativa A: Banco de Capacitores Comerciales</h4>", unsafe_allow_html=True)
+    banco = dimensionar_banco_capacitores(nivel_tension, q_compensar)
+    if banco.valor_comercial_kvar:
+        st.markdown(
+            f"""
+            <div class="metric-card-box metric-card-uacm">
+                <div class="metric-label">Banco Comercial Sugerido</div>
+                <div class="metric-num-uacm" style="font-size:36px !important;">{banco.valor_comercial_kvar:,.0f} <span style="font-size:22px;">kVAr</span></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        st.error("La potencia requerida supera el escalón comercial máximo.")
+
+with tab4:
+    st.markdown("<h4 style='color:#8F141B; font-weight:800; margin-bottom:12px;'>Alternativa B: Motor Síncrono en Sobreexcitación</h4>", unsafe_allow_html=True)
+    v_ll = st.number_input("Tensión de Línea a Línea [kV]", min_value=0.1, value=13.8, step=0.1)
+    corriente_ms = corriente_motor_sincrono(q_compensar, v_ll)
+    st.markdown(
+        f"""
+        <div class="metric-card-box metric-card-green" style="max-width: 540px;">
+            <div class="metric-label">Corriente Reactiva Capacitiva</div>
+            <div class="metric-num-green">{corriente_ms:,.2f} <span style="font-size:18px;">A</span></div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+with tab5:
+    st.markdown("<h4 style='color:#8F141B; font-weight:800; margin-bottom:12px;'>Costos de Inversión y Retorno Simple (ROI)</h4>", unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    with c1:
+        costo_bc = st.number_input("Costo Unitario Banco Capacitores [$ MXN / kVAr]", min_value=0.0, value=1700.0, step=50.0)
+    with c2:
+        costo_ms = st.number_input("Costo Unitario Motor Síncrono [$ MXN / kVAr]", min_value=0.0, value=5100.0, step=50.0)
+    
+    if st.button("📄 Generar Memoria Técnica Institucional (PDF)", use_container_width=True):
+        datos = DatosEntrada(
+            demanda_max_kw=demanda_medida, demanda_contratada_kw=demanda_contratada,
+            demanda_facturable_kw=demanda_facturable, estatus_demanda=estatus_demanda,
+            factor_utilizacion_pct=factor_utilizacion, fp_actual=fp_actual, fp_objetivo=fp_objetivo,
+            fp_minimo_base=fp_minimo_base, nivel_tension=nivel_tension, penalizacion_mensual_mxn=penalizacion,
+            v_ll_kv=v_ll, costo_kvar_banco_capacitores_mxn=costo_bc, costo_kvar_motor_sincrono_mxn=costo_ms,
+        )
+        resultado = calcular_todo(datos)
+        buffer = io.BytesIO()
+        generar_reporte_pdf(datos, resultado, buffer)
+        buffer.seek(0)
+        st.session_state.pdf_bytes = buffer.getvalue()
+        st.success("Memoria técnica generada con éxito.")
+
+    if st.session_state.pdf_bytes:
+        st.download_button(
+            "⬇️ Descargar Reporte Técnico Oficial (PDF)",
+            data=st.session_state.pdf_bytes,
+            file_name="Memoria_Tecnica_FP.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
