@@ -74,7 +74,7 @@ def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol, theta, gra
     pdf.cell(0, 5, f'Fecha de emision: {time.strftime("%Y-%m-%d %H:%M:%S")}', 0, 1, 'L')
     pdf.ln(3)
     
-    # Sección 1: Parámetros de Entrada (Fondo color vino pastel/claro)
+    # Sección 1: Parámetros de Entrada
     pdf.set_font('helvetica', 'B', 11)
     pdf.set_fill_color(245, 230, 232)
     pdf.set_text_color(123, 17, 19)
@@ -109,7 +109,7 @@ def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol, theta, gra
         ("Declinación solar (delta):", f"{dec:.4f} °"),
         ("Ángulo horario (omega):", f"{om:.4f} °"),
         ("Altura solar (alpha):", f"{alt:.4f} °"),
-        ("Azimut solar (phi_s):", f"{az_sol:.4f} °"),
+        ("Azimut solar (gamma_s):", f"{az_sol:.4f} °"),
         ("Ángulo de incidencia en colector (theta):", f"{theta:.4f} °")
     ]
     for k, v in resultados:
@@ -152,7 +152,7 @@ inclinacion = st.sidebar.number_input("Ajuste exacto Inclinación (°)", value=i
 azim_panel = st.sidebar.slider("Azimut del Panel (γs °)", -180.0, 180.0, 0.0, 1.0)
 azim_panel = st.sidebar.number_input("Ajuste exacto Azimut Panel (°)", value=azim_panel, format="%.1f")
 
-# --- CÁLCULOS ASTRONÓMICOS ---
+# --- CÁLCULOS ASTRONÓMICOS (ROBUSTOS CON ARCTAN2) ---
 declinacion = 23.45 * np.sin(np.radians(360 * (284 + dia_ano) / 365))
 omega = 15 * (hora_solar - 12)
 
@@ -160,14 +160,19 @@ lat_rad = np.radians(latitud)
 dec_rad = np.radians(declinacion)
 om_rad = np.radians(omega)
 
+# 1. Altura solar (alfa)
 sin_alpha = np.sin(lat_rad) * np.sin(dec_rad) + np.cos(lat_rad) * np.cos(dec_rad) * np.cos(om_rad)
 alpha_rad = np.arcsin(np.clip(sin_alpha, -1.0, 1.0))
 altura_solar = np.degrees(alpha_rad)
 
-cos_phi_s = (np.sin(dec_rad) * np.cos(lat_rad) - np.cos(dec_rad) * np.sin(lat_rad) * np.cos(om_rad)) / np.cos(alpha_rad) if np.cos(alpha_rad) != 0 else 0
-azimut_solar = np.degrees(np.arccos(np.clip(cos_phi_s, -1.0, 1.0)))
-if omega > 0:
-    azimut_solar = 360 - azimut_solar
+# 2. Azimut solar (gamma_s) robusto con arctan2
+cos_alpha = np.cos(alpha_rad)
+if cos_alpha == 0:
+    azimut_solar = 0.0
+else:
+    sin_phi_s = np.cos(dec_rad) * np.sin(om_rad) / cos_alpha
+    cos_phi_s = (np.sin(alpha_rad) * np.sin(lat_rad) - np.sin(dec_rad)) / (cos_alpha * np.cos(lat_rad))
+    azimut_solar = np.degrees(np.arctan2(sin_phi_s, np.clip(cos_phi_s, -1.0, 1.0)))
 
 beta_rad = np.radians(inclinacion)
 gam_s_rad = np.radians(azim_panel)
@@ -185,11 +190,8 @@ horas = np.linspace(6, 18, 100)
 incidencias_dia = []
 for h in horas:
     om_h = np.radians(15 * (h - 12))
-    # Altura y azimut temporal para cada hora
     sin_a_h = np.sin(lat_rad) * np.sin(dec_rad) + np.cos(lat_rad) * np.cos(dec_rad) * np.cos(om_h)
-    alpha_h_rad = np.arcsin(np.clip(sin_a_h, -1.0, 1.0))
     
-    # Angulo de incidencia por hora
     cos_th_h = (np.sin(dec_rad) * np.sin(lat_rad) * np.cos(beta_rad) -
                 np.sin(dec_rad) * np.cos(lat_rad) * np.sin(beta_rad) * np.cos(gam_s_rad) +
                 np.cos(dec_rad) * np.cos(lat_rad) * np.cos(beta_rad) * np.cos(om_h) +
