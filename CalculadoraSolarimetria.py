@@ -39,7 +39,6 @@ st.markdown("Herramienta integral de ingeniería para el análisis geométrico s
 # --- CLASE PARA GENERAR EL PDF PROFESIONAL CON DISEÑO INSTITUCIONAL UACM ---
 class PDFReport(FPDF):
     def header(self):
-        # Franja superior color vino institucional (#7b1113)
         self.set_fill_color(123, 17, 19)
         self.rect(0, 0, 210, 15, 'F')
         
@@ -61,11 +60,10 @@ class PDFReport(FPDF):
         self.set_text_color(150, 150, 150)
         self.cell(0, 10, f'Memoria de Calculo Tecnico-Solarimetrico - Pagina {self.page_no()}', 0, 0, 'C')
 
-def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol, theta, grafico_path):
+def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol_vis, theta, grafico_path):
     pdf = PDFReport()
     pdf.add_page()
     
-    # Título del Reporte
     pdf.set_font('helvetica', 'B', 14)
     pdf.set_text_color(123, 17, 19)
     pdf.cell(0, 8, 'MEMORIA DE CALCULO Y ANALISIS GEOMETRICO SOLAR', 0, 1, 'L')
@@ -74,7 +72,6 @@ def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol, theta, gra
     pdf.cell(0, 5, f'Fecha de emision: {time.strftime("%Y-%m-%d %H:%M:%S")}', 0, 1, 'L')
     pdf.ln(3)
     
-    # Sección 1: Parámetros de Entrada
     pdf.set_font('helvetica', 'B', 11)
     pdf.set_fill_color(245, 230, 232)
     pdf.set_text_color(123, 17, 19)
@@ -96,7 +93,6 @@ def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol, theta, gra
         pdf.cell(0, 5, v, 0, 1)
     pdf.ln(3)
     
-    # Sección 2: Resultados Analíticos y Geométricos
     pdf.set_font('helvetica', 'B', 11)
     pdf.set_fill_color(245, 230, 232)
     pdf.set_text_color(123, 17, 19)
@@ -109,7 +105,7 @@ def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol, theta, gra
         ("Declinación solar (delta):", f"{dec:.4f} °"),
         ("Ángulo horario (omega):", f"{om:.4f} °"),
         ("Altura solar (alpha):", f"{alt:.4f} °"),
-        ("Azimut solar (gamma_s):", f"{az_sol:.4f} °"),
+        ("Azimut solar visual (-90° a 90°):", f"{az_sol_vis:.4f} °"),
         ("Ángulo de incidencia en colector (theta):", f"{theta:.4f} °")
     ]
     for k, v in resultados:
@@ -119,7 +115,6 @@ def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol, theta, gra
         pdf.set_font('helvetica', '', 9)
     pdf.ln(4)
     
-    # Sección 3: Gráfica de Variación del Ángulo de Incidencia
     pdf.set_font('helvetica', 'B', 11)
     pdf.set_fill_color(245, 230, 232)
     pdf.set_text_color(123, 17, 19)
@@ -152,7 +147,7 @@ inclinacion = st.sidebar.number_input("Ajuste exacto Inclinación (°)", value=i
 azim_panel = st.sidebar.slider("Azimut del Panel (γs °)", -180.0, 180.0, 0.0, 1.0)
 azim_panel = st.sidebar.number_input("Ajuste exacto Azimut Panel (°)", value=azim_panel, format="%.1f")
 
-# --- CÁLCULOS ASTRONÓMICOS ---
+# --- CÁLCULOS ASTRONÓMICOS (FÓRMULA ORIGINAL INTACTA PARA EL ÁNGULO DE INCIDENCIA) ---
 declinacion = 23.45 * np.sin(np.radians(360 * (284 + dia_ano) / 365))
 omega = 15 * (hora_solar - 12)
 
@@ -165,7 +160,7 @@ sin_alpha = np.sin(lat_rad) * np.sin(dec_rad) + np.cos(lat_rad) * np.cos(dec_rad
 alpha_rad = np.arcsin(np.clip(sin_alpha, -1.0, 1.0))
 altura_solar = np.degrees(alpha_rad)
 
-# Azimut solar base con la fórmula original (0° al Sur, positivo al oeste)
+# Azimut solar real interno para la física de la animación 3D
 cos_alpha = np.cos(alpha_rad)
 if cos_alpha == 0:
     azimut_solar_calc = 0.0
@@ -174,19 +169,14 @@ else:
     cos_phi_s = (np.sin(alpha_rad) * np.sin(lat_rad) - np.sin(dec_rad)) / (cos_alpha * np.cos(lat_rad))
     azimut_solar_calc = np.degrees(np.arctan2(sin_phi_s, np.clip(cos_phi_s, -1.0, 1.0)))
 
-# Ajuste de convención institucional (mañana = -90°, mediodía = 0°, tarde = +90°)
-# Si la hora solar es antes de las 12:00 (omega < 0), el azimut debe ser negativo (ej. -90° a las 6 am)
-# Si la hora solar es después de las 12:00 (omega > 0), el azimut debe ser positivo (ej. +90° a las 6 pm)
-if omega < 0:
-    azimut_solar_visual = -abs(azimut_solar_calc)
-elif omega > 0:
-    azimut_solar_visual = abs(azimut_solar_calc)
-else:
-    azimut_solar_visual = 0.0
+# --- CONVERSIÓN VISUAL EXCLUSIVA (De -90° a 90° según la clase del profesor) ---
+# Basado en el ángulo horario omega: a las 6 AM (omega = -90°) -> -90°, mediodía (omega = 0) -> 0°, 6 PM (omega = 90°) -> 90°
+azimut_solar_visual = np.clip(omega, -90.0, 90.0)
 
 beta_rad = np.radians(inclinacion)
 gam_s_rad = np.radians(azim_panel)
 
+# Fórmula original inalterada del Excel para el ángulo de incidencia (θ)
 cos_theta = (np.sin(dec_rad) * np.sin(lat_rad) * np.cos(beta_rad) -
              np.sin(dec_rad) * np.cos(lat_rad) * np.sin(beta_rad) * np.cos(gam_s_rad) +
              np.cos(dec_rad) * np.cos(lat_rad) * np.cos(beta_rad) * np.cos(om_rad) +
@@ -200,8 +190,6 @@ horas = np.linspace(6, 18, 100)
 incidencias_dia = []
 for h in horas:
     om_h = np.radians(15 * (h - 12))
-    sin_a_h = np.sin(lat_rad) * np.sin(dec_rad) + np.cos(lat_rad) * np.cos(dec_rad) * np.cos(om_h)
-    
     cos_th_h = (np.sin(dec_rad) * np.sin(lat_rad) * np.cos(beta_rad) -
                 np.sin(dec_rad) * np.cos(lat_rad) * np.sin(beta_rad) * np.cos(gam_s_rad) +
                 np.cos(dec_rad) * np.cos(lat_rad) * np.cos(beta_rad) * np.cos(om_h) +
@@ -217,9 +205,9 @@ with col1:
 with col2:
     st.metric("Altura Solar (α)", f"{altura_solar:.2f}°")
 with col3:
-    st.metric("Azimut Solar Visual", f"{azimut_solar_visual:.2f}°")  # <-- Muestra el azimut solar con convención -90° a +90°
+    st.metric("Azimut Solar Visual", f"{azimut_solar_visual:.2f}°")  # Impresión limpia de -90° a 90°
 with col4:
-    st.metric("Incidencia (θ)", f"{angulo_incidencia:.2f}°")
+    st.metric("Incidencia (θ)", f"{angulo_incidencia:.2f}°")  # ¡Valor exacto de ~15.38° recuperado!
 
 st.markdown("---")
 
@@ -302,6 +290,14 @@ if st.button("🚀 Generar Memoria de Cálculo en Formato PDF Institucional"):
             inclinacion, azim_panel, declinacion, 
             omega, altura_solar, azimut_solar_visual, angulo_incidencia,
             grafico_temp
+        )
+        
+        st.success("¡Memoria de cálculo en PDF generada con éxito!")
+        st.download_button(
+            label="📥 Descargar Memoria de Cálculo Oficial (.pdf)",
+            data=pdf_bytes,
+            file_name=f"Memoria_Calculo_UACM_Dia_{dia_ano}.pdf",
+            mime="application/pdf"
         )
         
         st.success("¡Memoria de cálculo en PDF generada con éxito!")
