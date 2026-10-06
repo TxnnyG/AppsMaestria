@@ -74,7 +74,7 @@ def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol, theta, gra
     pdf.cell(0, 5, f'Fecha de emision: {time.strftime("%Y-%m-%d %H:%M:%S")}', 0, 1, 'L')
     pdf.ln(3)
     
-    # Sección 1: Parámetros de Entrada (Fondo color vino pastel/claro)
+    # Sección 1: Parámetros de Entrada
     pdf.set_font('helvetica', 'B', 11)
     pdf.set_fill_color(245, 230, 232)
     pdf.set_text_color(123, 17, 19)
@@ -109,7 +109,7 @@ def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol, theta, gra
         ("Declinación solar (delta):", f"{dec:.4f} °"),
         ("Ángulo horario (omega):", f"{om:.4f} °"),
         ("Altura solar (alpha):", f"{alt:.4f} °"),
-        ("Azimut solar (phi_s):", f"{az_sol:.4f} °"),
+        ("Azimut solar (gamma_s):", f"{az_sol:.4f} °"),
         ("Ángulo de incidencia en colector (theta):", f"{theta:.4f} °")
     ]
     for k, v in resultados:
@@ -160,14 +160,29 @@ lat_rad = np.radians(latitud)
 dec_rad = np.radians(declinacion)
 om_rad = np.radians(omega)
 
+# Altura solar (alfa)
 sin_alpha = np.sin(lat_rad) * np.sin(dec_rad) + np.cos(lat_rad) * np.cos(dec_rad) * np.cos(om_rad)
 alpha_rad = np.arcsin(np.clip(sin_alpha, -1.0, 1.0))
 altura_solar = np.degrees(alpha_rad)
 
-cos_phi_s = (np.sin(dec_rad) * np.cos(lat_rad) - np.cos(dec_rad) * np.sin(lat_rad) * np.cos(om_rad)) / np.cos(alpha_rad) if np.cos(alpha_rad) != 0 else 0
-azimut_solar = np.degrees(np.arccos(np.clip(cos_phi_s, -1.0, 1.0)))
-if omega > 0:
-    azimut_solar = 360 - azimut_solar
+# Azimut solar base con la fórmula original (0° al Sur, positivo al oeste)
+cos_alpha = np.cos(alpha_rad)
+if cos_alpha == 0:
+    azimut_solar_calc = 0.0
+else:
+    sin_phi_s = np.cos(dec_rad) * np.sin(om_rad) / cos_alpha
+    cos_phi_s = (np.sin(alpha_rad) * np.sin(lat_rad) - np.sin(dec_rad)) / (cos_alpha * np.cos(lat_rad))
+    azimut_solar_calc = np.degrees(np.arctan2(sin_phi_s, np.clip(cos_phi_s, -1.0, 1.0)))
+
+# Ajuste de convención institucional (mañana = -90°, mediodía = 0°, tarde = +90°)
+# Si la hora solar es antes de las 12:00 (omega < 0), el azimut debe ser negativo (ej. -90° a las 6 am)
+# Si la hora solar es después de las 12:00 (omega > 0), el azimut debe ser positivo (ej. +90° a las 6 pm)
+if omega < 0:
+    azimut_solar_visual = -abs(azimut_solar_calc)
+elif omega > 0:
+    azimut_solar_visual = abs(azimut_solar_calc)
+else:
+    azimut_solar_visual = 0.0
 
 beta_rad = np.radians(inclinacion)
 gam_s_rad = np.radians(azim_panel)
@@ -185,11 +200,8 @@ horas = np.linspace(6, 18, 100)
 incidencias_dia = []
 for h in horas:
     om_h = np.radians(15 * (h - 12))
-    # Altura y azimut temporal para cada hora
     sin_a_h = np.sin(lat_rad) * np.sin(dec_rad) + np.cos(lat_rad) * np.cos(dec_rad) * np.cos(om_h)
-    alpha_h_rad = np.arcsin(np.clip(sin_a_h, -1.0, 1.0))
     
-    # Angulo de incidencia por hora
     cos_th_h = (np.sin(dec_rad) * np.sin(lat_rad) * np.cos(beta_rad) -
                 np.sin(dec_rad) * np.cos(lat_rad) * np.sin(beta_rad) * np.cos(gam_s_rad) +
                 np.cos(dec_rad) * np.cos(lat_rad) * np.cos(beta_rad) * np.cos(om_h) +
@@ -205,7 +217,7 @@ with col1:
 with col2:
     st.metric("Altura Solar (α)", f"{altura_solar:.2f}°")
 with col3:
-    st.metric("Azimut Solar (γs)", f"{azimut_solar:.2f}°")
+    st.metric("Azimut Solar Visual", f"{azimut_solar_visual:.2f}°")  # <-- Muestra el azimut solar con convención -90° a +90°
 with col4:
     st.metric("Incidencia (θ)", f"{angulo_incidencia:.2f}°")
 
@@ -217,8 +229,8 @@ st.markdown("Representación interactiva tridimensional de la incidencia de los 
 
 fig_3d = go.Figure()
 
-sun_x = np.cos(alpha_rad) * np.sin(np.radians(azimut_solar)) * 4
-sun_y = np.cos(alpha_rad) * np.cos(np.radians(azimut_solar)) * 4
+sun_x = np.cos(alpha_rad) * np.sin(np.radians(azimut_solar_calc)) * 4
+sun_y = np.cos(alpha_rad) * np.cos(np.radians(azimut_solar_calc)) * 4
 sun_z = np.sin(alpha_rad) * 4
 
 fig_3d.add_trace(go.Scatter3d(
@@ -288,7 +300,7 @@ if st.button("🚀 Generar Memoria de Cálculo en Formato PDF Institucional"):
         pdf_bytes = generar_pdf(
             latitud, longitud, dia_ano, hora_solar, 
             inclinacion, azim_panel, declinacion, 
-            omega, altura_solar, azimut_solar, angulo_incidencia,
+            omega, altura_solar, azimut_solar_visual, angulo_incidencia,
             grafico_temp
         )
         
@@ -299,3 +311,4 @@ if st.button("🚀 Generar Memoria de Cálculo en Formato PDF Institucional"):
             file_name=f"Memoria_Calculo_UACM_Dia_{dia_ano}.pdf",
             mime="application/pdf"
         )
+```eof
