@@ -149,7 +149,7 @@ st.sidebar.header("📐 2. Parámetros del Colector")
 inclinacion = st.sidebar.slider("Inclinación del Panel (β °)", 0.0, 90.0, 20.0, 1.0)
 inclinacion = st.sidebar.number_input("Ajuste exacto Inclinación (°)", value=inclinacion, format="%.1f")
 
-azim_panel = st.sidebar.slider("Azimut del Panel (γs °)", -180.0, 180.0, 0.0, 1.0)
+azim_panel = st.sidebar.slider("Azimut del Panel (γs °)", -90.0, 90.0, 0.0, 1.0)
 azim_panel = st.sidebar.number_input("Ajuste exacto Azimut Panel (°)", value=azim_panel, format="%.1f")
 
 # --- CÁLCULOS ASTRONÓMICOS (ROBUSTOS CON ARCTAN2) ---
