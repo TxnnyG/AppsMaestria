@@ -311,4 +311,3 @@ if st.button("🚀 Generar Memoria de Cálculo en Formato PDF Institucional"):
             file_name=f"Memoria_Calculo_UACM_Dia_{dia_ano}.pdf",
             mime="application/pdf"
         )
-```eof
