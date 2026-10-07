@@ -36,7 +36,7 @@ st.markdown("""
 st.title("☀️ Calculadora Solarimétrica y Memoria de Cálculo Avanzada")
 st.markdown("Herramienta integral de ingeniería para el análisis geométrico solar, simulación interactiva y generación de reportes técnicos.")
 
-# --- CLASE PARA GENERAR EL PDF PROFESIONAL CON DISEÑO INSTITUCIONAL UACM ---
+# LASE PARA GENERAR EL PDF PROFESIONAL CON DISEÑO INSTITUCIONAL UACM
 class PDFReport(FPDF):
     def header(self):
         self.set_fill_color(123, 17, 19)
@@ -126,7 +126,7 @@ def generar_pdf(lat, lon, dia, hora, inc, azim, dec, om, alt, az_sol_vis, theta,
         
     return bytes(pdf.output())
 
-# --- BARRA LATERAL: ENTRADA DE DATOS ---
+# BARRA LATERAL: ENTRADA DE DATOS
 st.sidebar.header("📍 1. Ubicación y Tiempo")
 latitud = st.sidebar.slider("Latitud (°)", -90.0, 90.0, 19.43, 0.01)
 latitud = st.sidebar.number_input("Ajuste exacto Latitud (°)", value=latitud, format="%.2f")
@@ -147,7 +147,7 @@ inclinacion = st.sidebar.number_input("Ajuste exacto Inclinación (°)", value=i
 azim_panel = st.sidebar.slider("Azimut del Panel (γs °)", -180.0, 180.0, 0.0, 1.0)
 azim_panel = st.sidebar.number_input("Ajuste exacto Azimut Panel (°)", value=azim_panel, format="%.1f")
 
-# --- CÁLCULOS ASTRONÓMICOS (FÓRMULA ORIGINAL INTACTA PARA EL ÁNGULO DE INCIDENCIA) ---
+# CÁLCULOS ASTRONÓMICOS
 declinacion = 23.45 * np.sin(np.radians(360 * (284 + dia_ano) / 365))
 omega = 15 * (hora_solar - 12)
 
@@ -169,14 +169,14 @@ else:
     cos_phi_s = (np.sin(alpha_rad) * np.sin(lat_rad) - np.sin(dec_rad)) / (cos_alpha * np.cos(lat_rad))
     azimut_solar_calc = np.degrees(np.arctan2(sin_phi_s, np.clip(cos_phi_s, -1.0, 1.0)))
 
-# --- CONVERSIÓN VISUAL EXCLUSIVA (De -90° a 90° según la clase del profesor) ---
-# Basado en el ángulo horario omega: a las 6 AM (omega = -90°) -> -90°, mediodía (omega = 0) -> 0°, 6 PM (omega = 90°) -> 90°
+# CONVERSIÓN VISUAL EXCLUSIVA
+Basado en el ángulo horario omega: a las 6 AM (omega = -90°) -> -90°, mediodía (omega = 0) -> 0°, 6 PM (omega = 90°) -> 90°
 azimut_solar_visual = np.clip(omega, -90.0, 90.0)
 
 beta_rad = np.radians(inclinacion)
 gam_s_rad = np.radians(azim_panel)
 
-# Fórmula original inalterada del Excel para el ángulo de incidencia (θ)
+# Fórmula para el ángulo de incidencia (θ)
 cos_theta = (np.sin(dec_rad) * np.sin(lat_rad) * np.cos(beta_rad) -
              np.sin(dec_rad) * np.cos(lat_rad) * np.sin(beta_rad) * np.cos(gam_s_rad) +
              np.cos(dec_rad) * np.cos(lat_rad) * np.cos(beta_rad) * np.cos(om_rad) +
@@ -185,7 +185,7 @@ cos_theta = (np.sin(dec_rad) * np.sin(lat_rad) * np.cos(beta_rad) -
 
 angulo_incidencia = np.degrees(np.arccos(np.clip(cos_theta, -1.0, 1.0)))
 
-# --- CÁLCULO DE INCIDENCIA A LO LARGO DEL DÍA PARA LA GRÁFICA ---
+# CÁLCULO DE INCIDENCIA A LO LARGO DEL DÍA PARA LA GRÁFICA
 horas = np.linspace(6, 18, 100)
 incidencias_dia = []
 for h in horas:
@@ -198,7 +198,7 @@ for h in horas:
     th_h_deg = np.degrees(np.arccos(np.clip(cos_th_h, -1.0, 1.0)))
     incidencias_dia.append(th_h_deg)
 
-# --- MOSTRAR MÉTRICAS PRINCIPALES ---
+#  MOSTRAR MÉTRICAS PRINCIPALES
 col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.metric("Declinación (δ)", f"{declinacion:.2f}°")
@@ -211,7 +211,7 @@ with col4:
 
 st.markdown("---")
 
-# --- ANIMACIÓN Y VISUALIZACIÓN 3D ---
+# ANIMACIÓN Y VISUALIZACIÓN 3D 
 st.subheader("🎥 Animación y Posición Relativa: Panel vs. Sol")
 st.markdown("Representación interactiva tridimensional de la incidencia de los rayos solares sobre la superficie inclinada del colector.")
 
@@ -258,14 +258,14 @@ st.plotly_chart(fig_3d, use_container_width=True)
 
 st.markdown("---")
 
-# --- GRÁFICA DE EVOLUCIÓN DIARIA (ÁNGULO DE INCIDENCIA) ---
+# GRÁFICA DE EVOLUCIÓN DIARIA (ÁNGULO DE INCIDENCIA)
 st.subheader("📊 Comportamiento Diario del Ángulo de Incidencia (θ)")
 df_grafica = pd.DataFrame({"Hora Solar": horas, "Ángulo de Incidencia (°)": incidencias_dia})
 st.line_chart(df_grafica.set_index("Hora Solar"), color="#7b1113")
 
 st.markdown("---")
 
-# --- GENERACIÓN DE IMAGEN PARA EL PDF ---
+# GENERACIÓN DE IMAGEN PARA EL PDF
 grafico_temp = "temp_grafica_incidencia.png"
 plt.figure(figsize=(6, 3.5))
 plt.plot(horas, incidencias_dia, color='#7b1113', linewidth=2.5)
@@ -277,7 +277,7 @@ plt.tight_layout()
 plt.savefig(grafico_temp, dpi=200)
 plt.close()
 
-# --- MEMORIA DE CÁLCULO PROFESIONAL (PDF) ---
+# MEMORIA DE CÁLCULO PROFESIONAL (PDF)
 st.subheader("📑 Generación de Memoria de Cálculo y Reporte Técnico en PDF")
 st.markdown("Compile todos los datos de entrada, resultados analíticos y la gráfica de incidencia en un formato institucional formal.")
 
