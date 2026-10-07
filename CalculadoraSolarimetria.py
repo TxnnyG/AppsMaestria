@@ -170,7 +170,7 @@ else:
     azimut_solar_calc = np.degrees(np.arctan2(sin_phi_s, np.clip(cos_phi_s, -1.0, 1.0)))
 
 # CONVERSIÓN VISUAL EXCLUSIVA
-Basado en el ángulo horario omega: a las 6 AM (omega = -90°) -> -90°, mediodía (omega = 0) -> 0°, 6 PM (omega = 90°) -> 90°
+# Basado en el ángulo horario omega: a las 6 AM (omega = -90°) -> -90°, mediodía (omega = 0) -> 0°, 6 PM (omega = 90°) -> 90°
 azimut_solar_visual = np.clip(omega, -90.0, 90.0)
 
 beta_rad = np.radians(inclinacion)
